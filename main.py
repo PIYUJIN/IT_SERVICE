@@ -1,6 +1,7 @@
 import sys
 import os
 import csv
+import pandas as pd
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5 import uic
@@ -17,8 +18,11 @@ class WindowClass(QMainWindow, form_class) :
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
+        self.path=('','')
 
         self.pushButton.clicked.connect(self.loadImageFromFile)
+        self.excelBtn.clicked.connect(self.loadExcelFromFile)
+        self.showBtn.clicked.connect(self.showReceiptData)
 
     def loadImageFromFile(self):
         fileName=QFileDialog.getOpenFileName(self,"Open Image", './', "Image Files (*.png *.jpg *.bmp *.jpeg)")
@@ -30,6 +34,41 @@ class WindowClass(QMainWindow, form_class) :
             self.label.setPixmap(self.qPixmapFileVar)
         result=main(fileName[0])
         self.label_3.setText(result)
+
+    def loadExcelFromFile(self):
+        self.path=QFileDialog.getOpenFileName(self,"Open Csv", './', "Csv Files (*.csv)")
+        self.all_data=pd.read_csv(self.path[0],encoding='euc-kr')
+        self.all_data=self.all_data[['날짜', '영수증번호', ' 상세내용 ', ' 지출 ']]
+        self.tableWidget.setColumnCount(len(self.all_data.columns))
+        self.tableWidget.setRowCount(len(self.all_data))
+        self.tableWidget.setHorizontalHeaderLabels(self.all_data.columns)
+        for i in range(len(self.all_data)):
+            for j in range(len(self.all_data.columns)):
+                self.tableWidget.setItem(i, j, QTableWidgetItem(str(self.all_data.iat[i, j])))
+        self.tableWidget.resizeColumnsToContents()
+    def showReceiptData(self):
+        if os.path.isfile(self.path[0])=='':
+            return print('없음')
+        receiptNum=self.spinBox.value()
+        print(receiptNum)
+        if receiptNum==0:
+            self.tableWidget.setColumnCount(len(self.all_data.columns))
+            self.tableWidget.setRowCount(len(self.all_data))
+            self.tableWidget.setHorizontalHeaderLabels(self.all_data.columns)
+            for i in range(len(self.all_data)):
+                for j in range(len(self.all_data.columns)):
+                    self.tableWidget.setItem(i,j,QTableWidgetItem(str(self.all_data.iat[i,j])))
+            self.tableWidget.resizeColumnsToContents()
+        else:
+            self.tableWidget.setColumnCount(len(self.all_data.columns))
+            self.tableWidget.setRowCount(len(self.all_data))
+            self.tableWidget.setHorizontalHeaderLabels(self.all_data.columns)
+            for i in range(len(self.all_data)):
+                for j in range(len(self.all_data.columns)):
+                    if str(self.all_data.iat[i, j])==str(receiptNum):
+                        self.tableWidget.setItem(i, j, QTableWidgetItem(str(self.all_data.iat[i, j])))
+            self.tableWidget.resizeColumnsToContents()
+
 
 
 if __name__ == "__main__" :
