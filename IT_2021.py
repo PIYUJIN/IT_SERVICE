@@ -13,6 +13,47 @@ LIMIT_PX = 1024
 LIMIT_BYTE = 1024 * 1024  # 1MB
 LIMIT_BOX = 40
 
+def main(image_path:str):
+    if len(sys.argv) != 3:
+        print("Please run with args: $ python example.py /path/to/image appkey")
+    image_path, appkey = image_path, API_KEY.appkey
+
+    resize_impath = kakao_ocr_resize(image_path)
+    if resize_impath is not None:
+        image_path = resize_impath
+        print("원본 대신 리사이즈된 이미지를 사용합니다.")
+
+    output = kakao_ocr(image_path, appkey).json()
+    outputdata = json.dumps(output, ensure_ascii=False,sort_keys=True, indent=2)
+    #print("[OCR] output:\n{}\n".format(json.dumps(output, sort_keys=True, indent=2, ensure_ascii=False)))
+    # 받은 데이터 array로 변환
+    outputdata = json.loads(outputdata)
+
+    for i in range(len(outputdata['result'])):
+    #box 모양으로 잘라서 보여주기
+      x = outputdata['result'][i]['boxes'][0][0]
+      y = outputdata['result'][i]['boxes'][0][1]
+      w =  (outputdata['result'][i]['boxes'][1][0] -  outputdata['result'][i]['boxes'][0][0])
+      h =  (outputdata['result'][i]['boxes'][2][1] -  outputdata['result'][i]['boxes'][0][1])
+   #원본 이미지
+      org_image = cv2.imread('receipt.jpg')
+   #자른 이미지
+      img_trim = org_image[y:y+h, x:x+w]
+   #자른 이미지 보여주기
+      #cv2_imshow(img_trim)
+      print_outputdata = outputdata['result'][i]['recognition_words'][0]
+      #print(print_outputdata)
+      if outputdata['result'][i]['recognition_words'][0] == '결제금액' or outputdata['result'][i]['recognition_words'][0] == '합계':
+        sum = outputdata['result'][i + 1]['recognition_words'][0]
+        sum_n = re.findall(r'\d+', sum)
+        sum_num = ''.join(sum_n)
+        print(sum_num)
+      if outputdata['result'][i]['recognition_words'][0] == '결제일시':
+        date = outputdata['result'][i + 1]['recognition_words'][0]+outputdata['result'][i + 2]['recognition_words'][0]+outputdata['result'][i + 3]['recognition_words'][0]
+        date_n = re.findall(r'\d+',date)
+        date_num = ''.join(date_n)
+        print(date_num)
+    return '날짜: '+date_num+'\n'+'금액: '+sum_num
 
 def kakao_ocr_resize(image_path: str):
     """
@@ -58,53 +99,7 @@ def kakao_ocr(image_path: str, appkey: str):
 
     return requests.post(API_URL, headers=headers, files={"image": data})
 
-
-def main():
-    if len(sys.argv) != 3:
-        print("Please run with args: $ python example.py /path/to/image appkey")
-    image_path, appkey = 'receipt2.png', API_KEY.appkey
-
-    resize_impath = kakao_ocr_resize(image_path)
-    if resize_impath is not None:
-        image_path = resize_impath
-        print("원본 대신 리사이즈된 이미지를 사용합니다.")
-
-    output = kakao_ocr(image_path, appkey).json()
-    outputdata = json.dumps(output, ensure_ascii=False,sort_keys=True, indent=2)
-    #print("[OCR] output:\n{}\n".format(json.dumps(output, sort_keys=True, indent=2, ensure_ascii=False)))
-    # 받은 데이터 array로 변환
-    outputdata = json.loads(outputdata)
-
-    for i in range(len(outputdata['result'])):
-    #box 모양으로 잘라서 보여주기
-      x = outputdata['result'][i]['boxes'][0][0]
-      y = outputdata['result'][i]['boxes'][0][1]
-      w =  (outputdata['result'][i]['boxes'][1][0] -  outputdata['result'][i]['boxes'][0][0])
-      h =  (outputdata['result'][i]['boxes'][2][1] -  outputdata['result'][i]['boxes'][0][1])
-   #원본 이미지
-      org_image = cv2.imread('receipt.jpg')
-   #자른 이미지
-      img_trim = org_image[y:y+h, x:x+w]
-   #자른 이미지 보여주기
-      #cv2_imshow(img_trim)
-      print_outputdata = outputdata['result'][i]['recognition_words'][0]
-      #print(print_outputdata)
-      if outputdata['result'][i]['recognition_words'][0] == '결제금액' or outputdata['result'][i]['recognition_words'][0] == '합계':
-        sum = outputdata['result'][i + 1]['recognition_words'][0]
-        sum_n = re.findall(r'\d+', sum)
-        sum_num = ''.join(sum_n)
-        print(sum_num)
-      if outputdata['result'][i]['recognition_words'][0] == '결제일시':
-        date = outputdata['result'][i + 1]['recognition_words'][0]+outputdata['result'][i + 2]['recognition_words'][0]+outputdata['result'][i + 3]['recognition_words'][0]
-        date_n = re.findall(r'\d+',date)
-        date_num = ''.join(date_n)
-        print(date_num)
-
-
-
-
-
-
+def readCsv(csv_path:str):
     f = pd.read_csv('IT_2.csv', encoding='euc-kr')
     print(f)
     print("\n")
@@ -122,6 +117,8 @@ def main():
     #     print(line)
     # f.close()
 
+
+def getInput(sum_num,date_num,com):
     a = int(input("영수증 번호를 입력해주세요: "))
 
     # 엑셀 파일에서 영수증 번호 받아와서 비교하기
