@@ -47,27 +47,19 @@ class WindowClass(QMainWindow, form_class) :
                 self.tableWidget.setItem(i, j, QTableWidgetItem(str(self.all_data.iat[i, j])))
         self.tableWidget.resizeColumnsToContents()
     def showReceiptData(self):
-        if os.path.isfile(self.path[0])=='':
+        if self.path[0]=='':
+            # 나중에 alert 구현 예정
             return print('없음')
         receiptNum=self.spinBox.value()
         print(receiptNum)
-        if receiptNum==0:
-            self.tableWidget.setColumnCount(len(self.all_data.columns))
-            self.tableWidget.setRowCount(len(self.all_data))
-            self.tableWidget.setHorizontalHeaderLabels(self.all_data.columns)
-            for i in range(len(self.all_data)):
-                for j in range(len(self.all_data.columns)):
-                    self.tableWidget.setItem(i,j,QTableWidgetItem(str(self.all_data.iat[i,j])))
-            self.tableWidget.resizeColumnsToContents()
-        else:
-            self.tableWidget.setColumnCount(len(self.all_data.columns))
-            self.tableWidget.setRowCount(len(self.all_data))
-            self.tableWidget.setHorizontalHeaderLabels(self.all_data.columns)
-            for i in range(len(self.all_data)):
-                for j in range(len(self.all_data.columns)):
-                    if str(self.all_data.iat[i, j])==str(receiptNum):
-                        self.tableWidget.setItem(i, j, QTableWidgetItem(str(self.all_data.iat[i, j])))
-            self.tableWidget.resizeColumnsToContents()
+        self.all_data = self.all_data[self.all_data['영수증번호']==receiptNum]
+        self.tableWidget.setColumnCount(len(self.all_data.columns))
+        self.tableWidget.setRowCount(len(self.all_data))
+        self.tableWidget.setHorizontalHeaderLabels(self.all_data.columns)
+        for i in range(len(self.all_data)):
+            for j in range(len(self.all_data.columns)):
+                self.tableWidget.setItem(i, j, QTableWidgetItem(str(self.all_data.iat[i, j])))
+        self.tableWidget.resizeColumnsToContents()
 
 
 
