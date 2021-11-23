@@ -33,8 +33,9 @@ class WindowClass(QMainWindow, form_class) :
             self.qPixmapFileVar.load(fileName[0])
             self.qPixmapFileVar=self.qPixmapFileVar.scaledToWidth(400)
             self.label.setPixmap(self.qPixmapFileVar)
-        result=main(fileName[0])
-        self.label_3.setText(result)
+        self.ocr_date,self.ocr_price=main(fileName[0])
+        self.label_3.setText(self.ocr_date+self.ocr_price)
+        print(self.ocr_date, type(self.ocr_price))
 
     def loadExcelFromFile(self):
         self.path=QFileDialog.getOpenFileName(self,"Open Csv", './', "Csv Files (*.csv)")
@@ -49,7 +50,7 @@ class WindowClass(QMainWindow, form_class) :
         self.tableWidget.resizeColumnsToContents()
     def showReceiptData(self):
         if self.path[0]=='':
-            # 나중에 alert 구현 예정
+            QMessageBox.about(self,'CSV 파일 없음','CSV 파일을 먼저 불러와주세요!')
             return print('없음')
         receiptNum=self.spinBox.value()
         print(receiptNum)
@@ -61,10 +62,22 @@ class WindowClass(QMainWindow, form_class) :
             for j in range(len(self.selected_data.columns)):
                 self.tableWidget.setItem(i, j, QTableWidgetItem(str(self.selected_data.iat[i, j])))
         self.tableWidget.resizeColumnsToContents()
+        if len(self.selected_data)!=0:
+            self.excel_date=self.selected_data.iat[0,0]
+            self.excel_date = self.excel_date.replace(".","")
+            self.excel_price=self.selected_data.iat[0,3]
+            print(self.excel_date, self.excel_price)
+            print(self.ocr_date, self.ocr_price)
+            print(self.excel_date==self.ocr_date)
+            print(self.excel_price == self.ocr_price)
+
+            # if self.excel_date==self.ocr_date and self.excel_price==self.ocr_price:
+            QMessageBox.about(self, '데이터 비교하기', '날짜와 금액이 모두 일치합니다!')
+
 
     def showList(self):
         if self.path[0]=='':
-            # 나중에 alert 구현 예정
+            QMessageBox.about(self, 'CSV 파일 없음', 'CSV 파일을 먼저 불러와주세요!')
             return print('없음')
         self.all_data = self.all_data[['날짜', '영수증번호', ' 상세내용 ', ' 지출 ']]
         self.tableWidget.setColumnCount(len(self.all_data.columns))
@@ -81,7 +94,7 @@ if __name__ == "__main__" :
 
     #WindowClass의 인스턴스 생성
     myWindow = WindowClass()
-
+    myWindow.setFixedSize(myWindow.size())
     #프로그램 화면을 보여주는 코드
     myWindow.show()
 

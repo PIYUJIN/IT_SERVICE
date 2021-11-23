@@ -53,7 +53,7 @@ def main(image_path:str):
         date_n = re.findall(r'\d+',date)
         date_num = ''.join(date_n)
         print(date_num)
-    return '날짜: '+date_num+'\n'+'금액: '+sum_num
+    return (date_num,sum_num)
 
 def kakao_ocr_resize(image_path: str):
     """
