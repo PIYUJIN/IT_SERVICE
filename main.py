@@ -23,6 +23,7 @@ class WindowClass(QMainWindow, form_class) :
         self.pushButton.clicked.connect(self.loadImageFromFile)
         self.excelBtn.clicked.connect(self.loadExcelFromFile)
         self.showBtn.clicked.connect(self.showReceiptData)
+        self.showListBtn.clicked.connect(self.showList)
 
     def loadImageFromFile(self):
         fileName=QFileDialog.getOpenFileName(self,"Open Image", './', "Image Files (*.png *.jpg *.bmp *.jpeg)")
@@ -52,7 +53,20 @@ class WindowClass(QMainWindow, form_class) :
             return print('없음')
         receiptNum=self.spinBox.value()
         print(receiptNum)
-        self.all_data = self.all_data[self.all_data['영수증번호']==receiptNum]
+        self.selected_data = self.all_data[self.all_data['영수증번호']==receiptNum]
+        self.tableWidget.setColumnCount(len(self.selected_data.columns))
+        self.tableWidget.setRowCount(len(self.selected_data))
+        self.tableWidget.setHorizontalHeaderLabels(self.selected_data.columns)
+        for i in range(len(self.selected_data)):
+            for j in range(len(self.selected_data.columns)):
+                self.tableWidget.setItem(i, j, QTableWidgetItem(str(self.selected_data.iat[i, j])))
+        self.tableWidget.resizeColumnsToContents()
+
+    def showList(self):
+        if self.path[0]=='':
+            # 나중에 alert 구현 예정
+            return print('없음')
+        self.all_data = self.all_data[['날짜', '영수증번호', ' 상세내용 ', ' 지출 ']]
         self.tableWidget.setColumnCount(len(self.all_data.columns))
         self.tableWidget.setRowCount(len(self.all_data))
         self.tableWidget.setHorizontalHeaderLabels(self.all_data.columns)
@@ -60,9 +74,7 @@ class WindowClass(QMainWindow, form_class) :
             for j in range(len(self.all_data.columns)):
                 self.tableWidget.setItem(i, j, QTableWidgetItem(str(self.all_data.iat[i, j])))
         self.tableWidget.resizeColumnsToContents()
-
-
-
+        self.spinBox.setValue(0)
 if __name__ == "__main__" :
     #QApplication : 프로그램을 실행시켜주는 클래스
     app = QApplication(sys.argv)

@@ -79,6 +79,13 @@
        </property>
       </widget>
      </item>
+     <item row="4" column="3">
+      <widget class="QPushButton" name="showBtn">
+       <property name="text">
+        <string>해당 영수증 출력</string>
+       </property>
+      </widget>
+     </item>
      <item row="4" column="2">
       <widget class="QSpinBox" name="spinBox"/>
      </item>
@@ -89,15 +96,15 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="3">
-      <widget class="QPushButton" name="showBtn">
+     <item row="10" column="0" colspan="4">
+      <widget class="QTableWidget" name="tableWidget"/>
+     </item>
+     <item row="11" column="3">
+      <widget class="QPushButton" name="showListBtn">
        <property name="text">
-        <string>해당 영수증 출력</string>
+        <string>전체보기</string>
        </property>
       </widget>
-     </item>
-     <item row="9" column="0" colspan="4">
-      <widget class="QTableWidget" name="tableWidget"/>
      </item>
     </layout>
    </widget>
