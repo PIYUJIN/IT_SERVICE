@@ -17,19 +17,20 @@
 # 기능 설명
 #### 엑셀 데이터와 영수증 이미지로부터 OCR기술을 이용하여 추출한 데이터를 비교해주는 자동화 프로그램입니다. 세부 기능은 아래와 같습니다.
 
-1. 지역 내 공적 마스크 판매처와 현황을 마커로 표시해 줍니다.  
-<img width="720" alt="mask-stores" src="https://user-images.githubusercontent.com/49309450/77252324-75794f00-6c96-11ea-82b2-c416455c3a5e.png">  
+1. 처음 프로그램 실행시 화면은 아래와 같습니다.  
+<img width="720" alt="mask-stores" src="https://user-images.githubusercontent.com/76461625/143190791-83adf3db-03ef-4027-b1c9-7863b66b0200.png">  
 
-2. 30일 내에 확진자가 다녀간 동선을 주황색 마커로 표시해 줍니다. 다녀간 지 오래될 수록 색이 옅어집니다.  
-<img width="720" alt="patients" src="https://user-images.githubusercontent.com/49309450/77252328-7b6f3000-6c96-11ea-9eba-15c120146062.png">  
+2. 먼저 엑셀파일을 올려줍니다. 해당 엑셀파일에서 필요한 데이터들만 불러옵니다.
+<img width="720" alt="patients" src="https://user-images.githubusercontent.com/76461625/143190814-bf1c03e1-8404-4e60-b725-2f892b9e4fb0.png">  
 
-3. 공적 마스크 판매처와 현황, 확진자 정보, 확진자 동선 정보 등을 주기적으로 **자동 업데이트**하고 확진자 동선이 업데이트될 시 **메일**로 수신 가능합니다.  
+3. 엑셀 불러오기가 끝나고 데이터 비교를 위해 영수증 이미지 파일을 불러옵니다.
+<img width="720" alt="hospitals" src="https://user-images.githubusercontent.com/76461625/143190818-4d546e21-5d00-4170-b6b2-0b9f8c6e3165.png">  
 
-4. 지역 내 선별 진료소를 표시해줍니다.  
-<img width="720" alt="hospitals" src="https://user-images.githubusercontent.com/49309450/77252331-7d38f380-6c96-11ea-91a6-2b2f4ffd6eb9.png">  
+4. 이미지 불러오기가 끝나고 해당 이미지로부터 결제 날짜와 결제 금액을 불러옵니다.   
+<img width="720" alt="hospitals" src="https://user-images.githubusercontent.com/76461625/143190822-3b5b5e79-7229-4911-b30f-25b21986eb79.png">  
 
-5. 확진자 동선을 GUI로 쉽고 빠르게 추가할 수 있습니다.  
-<img width="720" alt="patient-admin" src="https://user-images.githubusercontent.com/49309450/77252326-79a56c80-6c96-11ea-87e3-e1108a22a4e2.png">  
+5. **Side Box**에서 영수증 번호를 입력하고 영수증 비교하기 버튼을 클릭시, 엑셀 데이터와 ocr데이터를 비교하게 되고 일치/불일치를 알림창으로 알려줍니다.  
+<img width="720" alt="patient-admin" src="https://user-images.githubusercontent.com/76461625/143190826-36185463-2e65-4166-8016-3c5a73a5c0a0.png">  
 
 ---
 
