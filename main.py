@@ -39,7 +39,7 @@ class WindowClass(QMainWindow, form_class) :
             print(self.imagePath)
             self.qPixmapFileVar=QPixmap()
             self.qPixmapFileVar.load(self.imagePath[0])
-            self.qPixmapFileVar=self.qPixmapFileVar.scaledToWidth(400)
+            self.qPixmapFileVar=self.qPixmapFileVar.scaledToWidth(500)
             self.label.setPixmap(self.qPixmapFileVar)
         result=main(self.imagePath[0])
         self.ocr_date=result[0]
