@@ -19,6 +19,9 @@ class WindowClass(QMainWindow, form_class) :
         super().__init__()
         self.setupUi(self)
         self.path=('','')
+        self.imagePath=('','')
+
+
 
         self.pushButton.clicked.connect(self.loadImageFromFile)
         self.excelBtn.clicked.connect(self.loadExcelFromFile)
@@ -29,18 +32,26 @@ class WindowClass(QMainWindow, form_class) :
         if self.path[0]=='':
             QMessageBox.about(self,'CSV 파일 없음','CSV 파일을 먼저 불러와주세요!')
             return print('없음')
-        fileName=QFileDialog.getOpenFileName(self,"Open Image", './', "Image Files (*.png *.jpg *.bmp *.jpeg)")
-        if fileName:
-            print(fileName)
+        self.imagePath=QFileDialog.getOpenFileName(self,"Open Image", './', "Image Files (*.png *.jpg *.bmp *.jpeg)")
+        if self.imagePath:
+            print(self.imagePath)
             self.qPixmapFileVar=QPixmap()
-            self.qPixmapFileVar.load(fileName[0])
+            self.qPixmapFileVar.load(self.imagePath[0])
             self.qPixmapFileVar=self.qPixmapFileVar.scaledToWidth(400)
             self.label.setPixmap(self.qPixmapFileVar)
-        result=main(fileName[0])
+        result=main(self.imagePath[0])
         self.ocr_date=result[0]
         self.ocr_price=result[1]
         print(self.ocr_date,self.ocr_price)
-        self.label_3.setText('날짜: '+self.ocr_date+'\n'+'금액: '+self.ocr_price)
+        p_ocr_date=self.ocr_date[:4]+'.'+self.ocr_date[4:6]+'.'+self.ocr_date[6:]
+        self.tableWidget_2.setRowCount(1)
+        self.tableWidget_2.setColumnCount(4)
+        self.tableWidget_2.setItem(0, 0, QTableWidgetItem("날짜"))
+        self.tableWidget_2.setItem(0, 1, QTableWidgetItem(p_ocr_date))
+        self.tableWidget_2.setItem(0, 2, QTableWidgetItem("금액"))
+        self.tableWidget_2.setItem(0, 3, QTableWidgetItem(self.ocr_price))
+        self.tableWidget_2.resizeColumnsToContents()
+        self.tableWidget_2.resizeRowsToContents()
         # print(ocr_date, type(ocr_price))
 
     def loadExcelFromFile(self):
@@ -59,6 +70,9 @@ class WindowClass(QMainWindow, form_class) :
         if self.path[0]=='':
             QMessageBox.about(self,'CSV 파일 없음','CSV 파일을 먼저 불러와주세요!')
             return print('없음')
+        if self.imagePath[0]=='':
+            QMessageBox.about(self,'영수증 파일 없음','영수증 이미지를 불러와주세요!')
+            return print('없음')
         receiptNum=self.spinBox.value()
         print(receiptNum)
         self.selected_data = self.all_data[self.all_data['영수증번호']==receiptNum]
@@ -69,6 +83,7 @@ class WindowClass(QMainWindow, form_class) :
             for j in range(len(self.selected_data.columns)):
                 self.tableWidget.setItem(i, j, QTableWidgetItem(str(self.selected_data.iat[i, j])))
         self.tableWidget.resizeColumnsToContents()
+
         if len(self.selected_data)!=0:
             self.excel_date=self.selected_data.iat[0,0]
             self.excel_date = self.excel_date.replace(".","")
@@ -80,6 +95,12 @@ class WindowClass(QMainWindow, form_class) :
 
             if self.excel_date==self.ocr_date and (int)(self.excel_price)==(int)(self.ocr_price):
                 QMessageBox.about(self, '데이터 비교하기', '날짜와 금액이 모두 일치합니다!')
+            elif self.excel_date == self.ocr_date and (int)(self.excel_price) != (int)(self.ocr_price):
+                QMessageBox.about(self, '데이터 비교하기', '금액이 일치하지 않습니다!')
+            elif self.excel_date != self.ocr_date and (int)(self.excel_price) == (int)(self.ocr_price):
+                QMessageBox.about(self, '데이터 비교하기', '날짜가 일치하지 않습니다!')
+            elif self.excel_date != self.ocr_date and (int)(self.excel_price) != (int)(self.ocr_price):
+                QMessageBox.about(self, '데이터 비교하기', '날짜와 금액이 모두 일치하지 않습니다!')
 
 
     def showList(self):
