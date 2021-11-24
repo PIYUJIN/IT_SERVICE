@@ -28,32 +28,61 @@ def main(image_path:str):
     #print("[OCR] output:\n{}\n".format(json.dumps(output, sort_keys=True, indent=2, ensure_ascii=False)))
     # 받은 데이터 array로 변환
     outputdata = json.loads(outputdata)
-
+    #여기 ocr_result 배열 추가했습니다
+    ocr_result = []
     for i in range(len(outputdata['result'])):
     #box 모양으로 잘라서 보여주기
-      x = outputdata['result'][i]['boxes'][0][0]
-      y = outputdata['result'][i]['boxes'][0][1]
-      w =  (outputdata['result'][i]['boxes'][1][0] -  outputdata['result'][i]['boxes'][0][0])
-      h =  (outputdata['result'][i]['boxes'][2][1] -  outputdata['result'][i]['boxes'][0][1])
-   #원본 이미지
-      org_image = cv2.imread('receipt.jpg')
-   #자른 이미지
-      img_trim = org_image[y:y+h, x:x+w]
-   #자른 이미지 보여주기
-      #cv2_imshow(img_trim)
-      print_outputdata = outputdata['result'][i]['recognition_words'][0]
-      #print(print_outputdata)
-      if outputdata['result'][i]['recognition_words'][0] == '결제금액' or outputdata['result'][i]['recognition_words'][0] == '합계':
-        sum = outputdata['result'][i + 1]['recognition_words'][0]
-        sum_n = re.findall(r'\d+', sum)
-        sum_num = ''.join(sum_n)
-        print(sum_num)
-      if outputdata['result'][i]['recognition_words'][0] == '결제일시':
-        date = outputdata['result'][i + 1]['recognition_words'][0]+outputdata['result'][i + 2]['recognition_words'][0]+outputdata['result'][i + 3]['recognition_words'][0]
-        date_n = re.findall(r'\d+',date)
-        date_num = ''.join(date_n)
-        print(date_num)
-    return (date_num,sum_num)
+        x = outputdata['result'][i]['boxes'][0][0]
+        y = outputdata['result'][i]['boxes'][0][1]
+        w =  (outputdata['result'][i]['boxes'][1][0] -  outputdata['result'][i]['boxes'][0][0])
+        h =  (outputdata['result'][i]['boxes'][2][1] -  outputdata['result'][i]['boxes'][0][1])
+       #원본 이미지
+        org_image = cv2.imread('receipt.jpg')
+       #자른 이미지
+        img_trim = org_image[y:y+h, x:x+w]
+       #자른 이미지 보여주기
+        #cv2_imshow(img_trim)
+        print_outputdata = outputdata['result'][i]['recognition_words'][0]
+        #print(print_outputdata)
+
+        #print_outputdata 배열에 추가
+        ocr_result.append(print_outputdata)
+
+        priceList=[]
+        if outputdata['result'][i]['recognition_words'][0] == '결제금액' or \
+            outputdata['result'][i]['recognition_words'][0] == '결제금액:' or \
+            outputdata['result'][i]['recognition_words'][0] == '합계':
+            sum = outputdata['result'][i + 1]['recognition_words'][0]
+            sum_n = re.findall(r'\d+', sum)
+            sum_num = ''.join(sum_n)
+            '''priceList.append(price_sum)'''
+            print(sum_num)
+
+            '''if outputdata['result'][i]['recognition_words'][0] == '결제일시':
+            date = outputdata['result'][i + 1]['recognition_words'][0]+outputdata['result'][i + 2]['recognition_words'][0]+outputdata['result'][i + 3]['recognition_words'][0]
+            date_n = re.findall(r'\d+',date)
+            date_num = ''.join(date_n)
+            print(date_num)'''
+    '''sum_num = priceList[0]
+    print(sum_num)'''
+
+    p = re.compile(
+        '((\d{4})|\d{2})?(-|/|.)?(?P<year>[1-9]|0[1-9]|1[0-2])(-|/|.|년 )?(?P<month>[1-9]|0[1-9]|1[0-2])(-|/|.|월 )(?P<date>([1-9]|0[1-9]|[1-2][0-9]|3[01]))일?$')
+    #print(ocr_result)
+
+    dateList = []
+    for i in ocr_result:
+        m = p.match(i)
+        if m and ((1 if (int(m.group("date")) <= 28) else 0) if int(m.group("month")) == 2 else 1):
+            date_n = re.findall(r'\d+', i)
+            date_num_sum = ''.join(date_n)
+            dateList.append(date_num_sum)
+        else:
+            continue
+    date_num = dateList[0]
+    print(date_num)
+
+    return (date_num, sum_num)
 
 def kakao_ocr_resize(image_path: str):
     """
@@ -163,6 +192,5 @@ def getInput(sum_num,date_num,com):
 
 
 
-
 if __name__ == "__main__":
-    main()
+    main("receipt4.png")
