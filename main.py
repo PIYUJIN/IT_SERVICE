@@ -20,7 +20,7 @@ class WindowClass(QMainWindow, form_class) :
         self.setupUi(self)
         self.path=('','')
         self.imagePath=('','')
-
+        self.spinBox.setMaximum(999)
 
 
         self.pushButton.clicked.connect(self.loadImageFromFile)
