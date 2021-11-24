@@ -21,7 +21,7 @@ def main(image_path:str):
     resize_impath = kakao_ocr_resize(image_path)
     if resize_impath is not None:
         image_path = resize_impath
-        print("원본 대신 리사이즈된 이미지를 사용합니다.")
+        # print("원본 대신 리사이즈된 이미지를 사용합니다.")
 
     output = kakao_ocr(image_path, appkey).json()
     outputdata = json.dumps(output, ensure_ascii=False,sort_keys=True, indent=2)
@@ -51,6 +51,8 @@ def main(image_path:str):
         priceList=[]
         if outputdata['result'][i]['recognition_words'][0] == '결제금액' or \
             outputdata['result'][i]['recognition_words'][0] == '결제금액:' or \
+            outputdata['result'][i]['recognition_words'][0] == '-결제금액:' or \
+            outputdata['result'][i]['recognition_words'][0] == '-결제무단:' or \
             outputdata['result'][i]['recognition_words'][0] == '합계':
             sum = outputdata['result'][i + 1]['recognition_words'][0]
             sum_n = re.findall(r'\d+', sum)
@@ -58,13 +60,14 @@ def main(image_path:str):
             '''priceList.append(price_sum)'''
             print(sum_num)
 
-            '''if outputdata['result'][i]['recognition_words'][0] == '결제일시':
+            '''
+            if outputdata['result'][i]['recognition_words'][0] == '결제일시':
             date = outputdata['result'][i + 1]['recognition_words'][0]+outputdata['result'][i + 2]['recognition_words'][0]+outputdata['result'][i + 3]['recognition_words'][0]
             date_n = re.findall(r'\d+',date)
             date_num = ''.join(date_n)
-            print(date_num)'''
-    '''sum_num = priceList[0]
-    print(sum_num)'''
+            print(date_num)
+            '''
+
 
     p = re.compile(
         '((\d{4})|\d{2})?(-|/|.)?(?P<year>[1-9]|0[1-9]|1[0-2])(-|/|.|년 )?(?P<month>[1-9]|0[1-9]|1[0-2])(-|/|.|월 )(?P<date>([1-9]|0[1-9]|[1-2][0-9]|3[01]))일?$')
@@ -80,6 +83,7 @@ def main(image_path:str):
         else:
             continue
     date_num = dateList[0]
+    print('날짜')
     print(date_num)
 
     return (date_num, sum_num)
@@ -193,4 +197,4 @@ def getInput(sum_num,date_num,com):
 
 
 if __name__ == "__main__":
-    main("receipt4.png")
+    main("r4.jpeg")
