@@ -26,6 +26,9 @@ class WindowClass(QMainWindow, form_class) :
         self.showListBtn.clicked.connect(self.showList)
 
     def loadImageFromFile(self):
+        if self.path[0]=='':
+            QMessageBox.about(self,'CSV 파일 없음','CSV 파일을 먼저 불러와주세요!')
+            return print('없음')
         fileName=QFileDialog.getOpenFileName(self,"Open Image", './', "Image Files (*.png *.jpg *.bmp *.jpeg)")
         if fileName:
             print(fileName)
@@ -33,9 +36,12 @@ class WindowClass(QMainWindow, form_class) :
             self.qPixmapFileVar.load(fileName[0])
             self.qPixmapFileVar=self.qPixmapFileVar.scaledToWidth(400)
             self.label.setPixmap(self.qPixmapFileVar)
-        self.ocr_date,self.ocr_price=main(fileName[0])
-        self.label_3.setText(self.ocr_date+self.ocr_price)
-        print(self.ocr_date, type(self.ocr_price))
+        result=main(fileName[0])
+        self.ocr_date=result[0]
+        self.ocr_price=result[1]
+        print(self.ocr_date,self.ocr_price)
+        self.label_3.setText('날짜: '+self.ocr_date+'\n'+'금액: '+self.ocr_price)
+        # print(ocr_date, type(ocr_price))
 
     def loadExcelFromFile(self):
         self.path=QFileDialog.getOpenFileName(self,"Open Csv", './', "Csv Files (*.csv)")
@@ -48,6 +54,7 @@ class WindowClass(QMainWindow, form_class) :
             for j in range(len(self.all_data.columns)):
                 self.tableWidget.setItem(i, j, QTableWidgetItem(str(self.all_data.iat[i, j])))
         self.tableWidget.resizeColumnsToContents()
+
     def showReceiptData(self):
         if self.path[0]=='':
             QMessageBox.about(self,'CSV 파일 없음','CSV 파일을 먼저 불러와주세요!')
@@ -67,12 +74,12 @@ class WindowClass(QMainWindow, form_class) :
             self.excel_date = self.excel_date.replace(".","")
             self.excel_price=self.selected_data.iat[0,3]
             print(self.excel_date, self.excel_price)
-            print(self.ocr_date, self.ocr_price)
+            # print(self.ocr_date, self.ocr_price)
             print(self.excel_date==self.ocr_date)
-            print(self.excel_price == self.ocr_price)
+            print((int)(self.excel_price)==(int)(self.ocr_price))
 
-            # if self.excel_date==self.ocr_date and self.excel_price==self.ocr_price:
-            QMessageBox.about(self, '데이터 비교하기', '날짜와 금액이 모두 일치합니다!')
+            if self.excel_date==self.ocr_date and (int)(self.excel_price)==(int)(self.ocr_price):
+                QMessageBox.about(self, '데이터 비교하기', '날짜와 금액이 모두 일치합니다!')
 
 
     def showList(self):
