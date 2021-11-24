@@ -4,4 +4,4 @@ env/
 
 __pycache__/
 
-./API_KEY.py
+API_KEY.py
