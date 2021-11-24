@@ -33,6 +33,8 @@ class WindowClass(QMainWindow, form_class) :
             QMessageBox.about(self,'CSV 파일 없음','CSV 파일을 먼저 불러와주세요!')
             return print('없음')
         self.imagePath=QFileDialog.getOpenFileName(self,"Open Image", './', "Image Files (*.png *.jpg *.bmp *.jpeg)")
+        if self.imagePath==('',''):
+            return
         if self.imagePath:
             print(self.imagePath)
             self.qPixmapFileVar=QPixmap()
@@ -56,6 +58,8 @@ class WindowClass(QMainWindow, form_class) :
 
     def loadExcelFromFile(self):
         self.path=QFileDialog.getOpenFileName(self,"Open Csv", './', "Csv Files (*.csv)")
+        if self.path==('',''):
+            return
         self.all_data=pd.read_csv(self.path[0],encoding='euc-kr')
         self.all_data=self.all_data[['날짜', '영수증번호', ' 상세내용 ', ' 지출 ']]
         self.tableWidget.setColumnCount(len(self.all_data.columns))
