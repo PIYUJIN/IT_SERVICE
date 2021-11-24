@@ -43,8 +43,7 @@ def main(image_path:str):
        #자른 이미지 보여주기
         #cv2_imshow(img_trim)
         print_outputdata = outputdata['result'][i]['recognition_words'][0]
-        # print(i)
-        # print(print_outputdata)
+        #print(print_outputdata)
 
         #print_outputdata 배열에 추가
         ocr_result.append(print_outputdata)
@@ -54,10 +53,8 @@ def main(image_path:str):
             outputdata['result'][i]['recognition_words'][0] == '결제금액:' or \
             outputdata['result'][i]['recognition_words'][0] == '-결제금액:' or \
             outputdata['result'][i]['recognition_words'][0] == '-결제무단:' or \
-            outputdata['result'][i]['recognition_words'][0] == '금액' or \
             outputdata['result'][i]['recognition_words'][0] == '합계':
             sum = outputdata['result'][i + 1]['recognition_words'][0]
-            # print(sum)
             sum_n = re.findall(r'\d+', sum)
             sum_num = ''.join(sum_n)
             '''priceList.append(price_sum)'''
@@ -74,7 +71,7 @@ def main(image_path:str):
 
     p = re.compile(
         '((\d{4})|\d{2})?(-|/|.)?(?P<year>[1-9]|0[1-9]|1[0-2])(-|/|.|년 )?(?P<month>[1-9]|0[1-9]|1[0-2])(-|/|.|월 )(?P<date>([1-9]|0[1-9]|[1-2][0-9]|3[01]))일?$')
-    # print(ocr_result)
+    #print(ocr_result)
 
     dateList = []
     for i in ocr_result:
@@ -86,7 +83,7 @@ def main(image_path:str):
         else:
             continue
     date_num = dateList[0]
-    print('날짜: ')
+    print('날짜')
     print(date_num)
 
     return (date_num, sum_num)
@@ -200,4 +197,4 @@ def getInput(sum_num,date_num,com):
 
 
 if __name__ == "__main__":
-    main("초특가3종.png")
+    main("r4.jpeg")
