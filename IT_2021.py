@@ -50,7 +50,7 @@ def kakao_ocr(image_path: str, appkey: str):
     headers = {'Authorization': 'KakaoAK {}'.format(appkey)}
 
     image = cv2.imread(image_path)
-    jpeg_image = cv2.imencode("receipt2.png", image)[1]
+    jpeg_image = cv2.imencode(".webp", image)[1]
     data = jpeg_image.tobytes()
 
     return requests.post(API_URL, headers=headers, files={"image": data})
@@ -131,4 +131,3 @@ def main(image_path:str):
 
 if __name__ == "__main__":
     main("images/receipt4.png")
-
