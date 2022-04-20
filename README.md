@@ -38,7 +38,7 @@
 
 ## 초기 설정
 #### - 다운로드 및 패키지 설치
-1. `git clone https://github.com/nero96in/coronamap_deploy.git` 로 다운로드
+1. `git clone https://github.com/muhanmu2jo/IT_SERVICE.git` 로 다운로드
 2. 가상환경 생성 및 활성화 후, `python -m pip install --upgrade pip` 로 pip 업그레이드
 3. `pip install -r requirements.txt`로 필요한 패키지 설치
 
